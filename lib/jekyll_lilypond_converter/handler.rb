@@ -13,9 +13,9 @@ module JekyllLilyPondConverter
 
       lilies.each do |lily|
         write_lily_code_file(lily)
-        generate_lily_image(lily)
-        add_lily_image_to_site(lily)
-        replace_snippet_with_image_link(lily)
+        has_midi = generate_lily_image(lily)
+        add_lily_image_to_site(lily, has_midi)
+        replace_snippet_with_image_link(lily, has_midi)
       end
       content
     end
@@ -38,14 +38,18 @@ module JekyllLilyPondConverter
     def generate_lily_image(lily)
       system("lilypond", lilypond_output_format_option, lily.code_filename)
       system("mv", lily.image_filename, "lily_images/")
+      has_midi = File.exists?(lily.midi_filename)
+      system("mv", lily.midi_filename, "lily_images/") if has_midi
       system("rm", lily.code_filename)
+      return has_midi
     end
 
-    def add_lily_image_to_site(lily)
+    def add_lily_image_to_site(lily, has_midi)
       site_manager.add_image(static_file_builder, lily.image_filename)
+      site_manager.add_image(static_file_builder, lily.midi_filename) if has_midi
     end
 
-    def replace_snippet_with_image_link(lily)
+    def replace_snippet_with_image_link(lily, has_midi)
       content.gsub!(lily.snippet, lily.image_link)
     end
 

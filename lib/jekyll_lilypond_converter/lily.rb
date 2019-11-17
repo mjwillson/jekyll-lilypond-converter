@@ -17,6 +17,10 @@ module JekyllLilyPondConverter
       "#{id}.#{extension}"
     end
 
+    def midi_filename
+      "#{id}.midi"
+    end
+
     def image_link
       baseurl = @site.config["baseurl"].to_s.chomp("/")
       "![](#{baseurl}/lily_images/#{image_filename})\n"
