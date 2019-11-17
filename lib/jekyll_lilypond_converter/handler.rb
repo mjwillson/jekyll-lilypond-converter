@@ -51,7 +51,7 @@ module JekyllLilyPondConverter
 
     def lilies
       lily_snippets.map do |snippet|
-        Lily.new(naming_policy.generate_name, image_format, snippet)
+        Lily.new(naming_policy.generate_name, image_format, snippet, site_manager.site)
       end
     end
 

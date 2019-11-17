@@ -2,10 +2,11 @@ module JekyllLilyPondConverter
   class Lily
     attr_reader :snippet
 
-    def initialize(id, extension, snippet)
+    def initialize(id, extension, snippet, site)
       @id = id
       @extension = extension
       @snippet = snippet
+      @site = site
     end
 
     def code_filename
@@ -17,7 +18,8 @@ module JekyllLilyPondConverter
     end
 
     def image_link
-      "![](/lily_images/#{image_filename})\n"
+      baseurl = @site.config["baseurl"].to_s.chomp("/")
+      "![](#{baseurl}/lily_images/#{image_filename})\n"
     end
 
     def code
