@@ -30,8 +30,18 @@ module JekyllLilyPondConverter
     end
 
     def image_link
-      baseurl = @site.config["baseurl"].to_s.chomp("/")
       "![](#{baseurl}/lily_images/#{image_filename})\n"
+    end
+
+    def mp3_link
+      <<END
+<div>
+  <audio controls="controls">
+    <source type="audio/mp3" src="#{baseurl}/lily_images/#{mp3_filename}"></source>
+    <p>Your browser does not support the audio element.</p>
+  </audio>
+</div>
+END
     end
 
     def code
@@ -43,6 +53,10 @@ module JekyllLilyPondConverter
 
     def strip_delimiters(snippet)
       snippet.gsub(/```lilypond\n/, "").gsub(/```\n/, "")
+    end
+
+    def baseurl
+      @site.config["baseurl"].to_s.chomp("/")
     end
   end
 end

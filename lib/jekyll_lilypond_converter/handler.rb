@@ -57,7 +57,9 @@ module JekyllLilyPondConverter
     end
 
     def replace_snippet_with_image_link(lily, has_audio)
-      content.gsub!(lily.snippet, lily.image_link)
+      replacement = lily.image_link
+      replacement += lily.mp3_link if has_audio
+      content.gsub!(lily.snippet, replacement)
     end
 
     def lilies
