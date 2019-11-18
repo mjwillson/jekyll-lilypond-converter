@@ -42,7 +42,7 @@ module JekyllLilyPondConverter
       if has_audio
         system("fluidsynth", "-ni", "/opt/local/share/sounds/sf2/FluidR3_GM.sf2", lily.midi_filename,
                "-F", lily.wav_filename, "-r", "44100")
-        system("twolame", "-b", "128", "-m", "m", lily.wav_filename, lily.mp3_filename)
+        system("lame", "-V2", "-m", "m", lily.wav_filename, lily.mp3_filename)
         system("rm", lily.midi_filename)
         system("rm", lily.wav_filename)
         system("mv", lily.mp3_filename, "lily_images/")
