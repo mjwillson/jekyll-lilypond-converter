@@ -13,9 +13,9 @@ module JekyllLilyPondConverter
 
       lilies.each do |lily|
         write_lily_code_file(lily)
-        has_midi = generate_lily_image(lily)
-        add_lily_image_to_site(lily, has_midi)
-        replace_snippet_with_image_link(lily, has_midi)
+        has_audio = generate_lily_image(lily)
+        add_lily_image_to_site(lily, has_audio)
+        replace_snippet_with_image_link(lily, has_audio)
       end
       content
     end
@@ -38,18 +38,25 @@ module JekyllLilyPondConverter
     def generate_lily_image(lily)
       system("lilypond", lilypond_output_format_option, lily.code_filename)
       system("mv", lily.image_filename, "lily_images/")
-      has_midi = File.exists?(lily.midi_filename)
-      system("mv", lily.midi_filename, "lily_images/") if has_midi
+      has_audio = File.exists?(lily.midi_filename)
+      if has_audio
+        system("fluidsynth", "-ni", "/opt/local/share/sounds/sf2/FluidR3_GM.sf2", lily.midi_filename,
+               "-F", lily.wav_filename, "-r", "44100")
+        system("twolame", "-b", "128", "-m", "m", lily.wav_filename, lily.mp3_filename)
+        system("rm", lily.midi_filename)
+        system("rm", lily.wav_filename)
+        system("mv", lily.mp3_filename, "lily_images/")
+      end
       system("rm", lily.code_filename)
-      return has_midi
+      return has_audio
     end
 
-    def add_lily_image_to_site(lily, has_midi)
+    def add_lily_image_to_site(lily, has_audio)
       site_manager.add_image(static_file_builder, lily.image_filename)
-      site_manager.add_image(static_file_builder, lily.midi_filename) if has_midi
+      site_manager.add_image(static_file_builder, lily.mp3_filename) if has_audio
     end
 
-    def replace_snippet_with_image_link(lily, has_midi)
+    def replace_snippet_with_image_link(lily, has_audio)
       content.gsub!(lily.snippet, lily.image_link)
     end
 
